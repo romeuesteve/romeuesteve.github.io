@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&display=swap');
+body {
+	color:#ebdbb2;
+	font-family: 'Space Mono', monospace;
+}
+h1 {
+	color:#83a598;
+	font-family: 'Space Mono', monospace;
+}
+h2 {
+	color:#83a598;
+	font-family: 'Space Mono', monospace;
+}
+h3 {
+	color:#83a598;
+	font-family: 'Space Mono', monospace;
+}
+h4 {
+	color:#83a598;
+	font-family: 'Space Mono', monospace;
+}
+a:link {
+	  color:#b8bb26;
+	    background-color: transparent;
+	      text-decoration: none;
+	      
+}
+
+a:visited {
+	  color:#98971a;
+	    background-color: transparent;
+	      text-decoration: none;
+	      
+}
+
+a:hover {
+	  color:#cc241d;
+	    background-color: transparent;
+	      text-decoration: underline;
+	      
+}
+
+a:active {
+	  color:#fabd2f;
+	    background-color: transparent;
+	      text-dec
+}
+td, th {
+	border: 1px solid #ddd;
+	padding 8px;
+}
+tr:nth-child(even) {
+	background-color: #1d2021;
+}
+tr:hover {
+	background-color: #665c54;
+
+}
+
+th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #689d6a;
+	color: #ebdbb2;
+}
