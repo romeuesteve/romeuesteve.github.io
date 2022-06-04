@@ -73,7 +73,7 @@
         }*/
         $('#login-button').bind('click', function () {
             var client_id = 'P2QFjmRfIHRfgmJ8agGimwSiP0WjlU4Uxk7bjftu';
-            var redirect_uri = 'https://romeuesteve.github.io/';
+            var redirect_uri = 'https://romeuesteve.github.io';
             var state = generateRandomString(16);
             localStorage.setItem(stateKey, state);
             var url = 'https://api.fib.upc.edu/v2/o/authorize/';
