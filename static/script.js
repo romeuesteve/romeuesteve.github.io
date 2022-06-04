@@ -36,7 +36,7 @@
         storedState = localStorage.getItem(stateKey);
     if (access_token && (state == null || state !== storedState)) {
         alert('There was an error during the authentication');
-    } else {/*
+    } else {
         localStorage.removeItem(stateKey);
         if (access_token) {
             $.ajax({
@@ -70,7 +70,7 @@
         } else {
             $('#login').show();
             $('#loggedin').hide();
-        }*/
+        }
         $('#login-button').bind('click', function () {
             var client_id = 'P2QFjmRfIHRfgmJ8agGimwSiP0WjlU4Uxk7bjftu';
             var redirect_uri = 'https://romeuesteve.github.io/';
