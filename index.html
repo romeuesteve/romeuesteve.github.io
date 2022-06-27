@@ -1,70 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>RomeuHub</title>
-    <link rel="shortcut icon" href="static/favicon.ico">
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<html lang="ca">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <base href="/">
+        <title>CronoFIB</title>
+        <link rel="stylesheet" href="https://bootswatch.com/3/cosmo/bootstrap.min.css" type="text/css" />
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <!-- Latest compiled and minified jQuery -->
-    <script
-            src="https://code.jquery.com/jquery-3.2.1.min.js"
-            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-            crossorigin="anonymous"></script>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
+<!--
+		<link rel="stylesheet" href="file:///C:/Users/romeu/OneDrive/Escriptori/CronoFIB/css/style.css" type="text/css" />
+-->	
 
-</head>
-<body>
-<nav class="navbar navbar-default navbar-fixed-top">
-    <div class="navbar-header"><a class="navbar-brand" href="#">FIB API 2.0 - JAVASCRIPT EXAMPLE</a>
-    </div>
-</nav>
-<div class="container">
-    <div class="content" style="padding: 100px">
-        <div class="row">
-            <div class="col-md-12">
-                <div id="jumbotron">
-                    <div class="jumbotron">
-                        <div id="login">
-                            <h1>Welcome to OAuth Demo with JavaScript</h1>
-                            <p>An example of a JavaScript application using the Implicit Grant on FIB API.</p>
-                            <p>To learn more about OAuth, visit <a
-                                    href="https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2">An
-                                Introduction to OAuth2</a>.</p>
-                            <button id="login-button" class="btn btn-primary btn-lg" role="button">Log in to get your
-                                info
-                            </button>
+        <!--<link href="http://defib.upc.edu/vendor/fishcoding/grinx/assets/font-awesome/css/font-awesome.css" rel="stylesheet">
+		-->
+        <script type="text/javascript" src="http://defib.upc.edu/js/jquery.min.js"></script>
+
+        <script type="text/javascript" src="http://defib.upc.edu/js/jquery.js"></script>
+	<script type="text/javascript" src="http://defib.upc.edu/js/bootstrap.min.js"></script>
+
+        
+<link  rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css">
+
+    </head>
+    <body style="background-color: #4e4a60;">
+
+        <!-- Pàgina principal -->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2>CronoFIB</h2>
+							<p>Basat en el <a href="http://defib.upc.edu/generador_horaris">generador d'horaris de defib</a></p>
                         </div>
-                        <div id="loggedin">
-                            <div id="user-profile">
-                                <img id="foto" src="" style="margin: auto; display: block">
-                                <div class="name" style="text-align: center; padding-top: 30px">
-                                    <p id="nom"></p>
-                                    <p id="cognoms"></p>
-                                </div>
-                            </div>
+                        <div class="panel-body">
+                            
+
+   <style>
+		input[type="number"] {
+			width: 4em;
+		}
+	</style>
+
+		<div class="panel panel-warning">
+			<div class="panel-heading">
+				Només durant la matricula
+			</div>
+			<div class="panel-body">
+				<button class="btn btn-warning" type="submit" id="Refresh_Button">Recalcular places lliures</button>
+			</div>
+		</div>
+		<div class="row">
+			<div id="assigs" class="col-md-4">
+				<div>
+				<div class="panel panel-default">
+						<div class="panel-heading">
+							<div class="row">
+								<div class="col-xs-6">
+									Pla
+								</div>
+	  							<div class="col-xs-6">
+									<select class="form-control" id="list_pla" style="width: 100%"></select>
+	  							</div>
+							</div>
+						</div>
+					</div>	
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<div class="row">
+								<div class="col-xs-6">
+									Assignatures
+								</div>
+	  							<div class="col-xs-6">
+									<select class="form-control" id="list_quadri" style="width: 100%"></select>
+	  							</div>
+							</div>
+						</div>
+						<div class="panel-body">
+							<select class="form-control" id="listcontainer" multiple="multiple" style="width: 100%" disabled></select>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Filtració
+					</div>
+					<div class="panel-body">
+						<input type="checkbox" id="mostrar-aules"> Veure aules<br>
+						<input type="checkbox" id="mostrar-ocupacio"> Veure ocupació <span class="text-muted">(places lliures / totals)</span><br>
+
+						<div class="row">
+							<div class="col-xs-6">
+								<input type="checkbox" id="morning" value="morning" checked="checked"> Matins
+							</div>
+							<div class="col-xs-6">
+								<input type="checkbox" id="night" value="night" checked="checked"> Tarda<br>
+							</div>
+						</div>
+
+						<input type="checkbox" id="diferenciar-teoria-de-practica"> Diferenciar teoria de practica <span class="text-muted">(Pots tenir un grup diferent de teoria al subgrup de laboratori)</span> <br>
+							
+						<div class="row">
+							<div class="col-xs-6">
+								Seleccionar dia lliure
+							</div>
+							<div class="col-xs-6">
+								<select class="form-control" id="seleccionar-dia-lliure" style="width: 100%">
+									<option value="0">Dilluns</option>
+									<option value="1">Dimarts</option>
+									<option value="2">Dimecres</option>
+									<option value="3">Dijous</option>
+									<option value="4" selected="selected">Divendres</option>
+									<option value="-1">me la suda</option>
+								</select>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Ordenació
+					</div>
+					<div class="panel-body" id=criteris>
+						<p class="text-muted">Els horaris s'ordenaran seguint els següents criteris. </p>
+						<p><input type="number" min=0 max=10 value=0 id='crit_mortes'> Evita hores mortes </p>
+						<p><input type="number" min=0 max=10 value=0 id='crit_sd'> Número d'hores per dia semblant </p>
+						<p><input type="number" min=0 max=10 value=0 id='crit_empty'> Classes poc plenes</p>
+						<p><input type="number" min=0 max=10 value=0 id='crit_dill_tard'> Comença tard els dilluns </p>
+						<p><input type="number" min=0 max=10 value=0 disabled="true"> Acabar d'hora el divendres</p>
+						<p><input type="number" min=0 max=10 value=0 id='crit_party'> Dia lliure</p>
+
+						<p class="text-muted">
+							Els números indiquen prioritat de criteri (de 0 a 10). Els criteris amb 0 s'ignoren.
+							Els criteris amb 10 són els més importants.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div id="col_graella" class="col-md-8 columna-horari">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						Resultat
+					</div>
+					<div class="panel-body" style='padding-bottom: 0'>
+						<div class="alert alert-info" id="error_msg">
+						</div>
+						<!--<p>La puntuacio es de <span id="pun"></span></p>-->
+						<p id='selector_horari'>Horari
+						<input type="number" min=1 id="label_horari"></select>
+						de <span id='total_horaris'></span>.<br>
+						<span class="text-muted">Fes servir les tecles <kbd>&larr;</kbd> i <kbd>&rarr;</kbd> per veure els diferents horaris.</span>
+						</p>
+						<div id="horari"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		&copy; Mario Rodríguez, Paco Martínez, with the colaboration of  INLAB FIB 
+ 
+		<p>  Built with <a href="https://api.fib.upc.edu"> API RACO v2 </a> </p>           
+        <p> Modificat per Romeu Esteve</p>
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<script src="file://C:\Users\romeu\OneDrive\Escriptori\CronoFIB\js\generador_horari_n.js"></script>
+
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<a href="https://gitlab.com/Toomoch/fiberhub.cat/-/raw/master/EDA/Col%C2%B7lecci%C3%B3%20d'examens.pdf" download="Col%C2%B7lecci%C3%B3%20d'examens.pdf">Download EDA exams</a>
-
-    
-    
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="static/script.js"></script>
-
-</body>
-</html>
+    </body>
+    </html>
