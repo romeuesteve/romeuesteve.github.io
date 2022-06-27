@@ -351,9 +351,7 @@ function GetHorarios(quieres_recalcular = true)
             }
 
         }
-    //    console.log("backtracking!");
-        if (dif_teoria) deeply_labs(0, horaris_assig, checkhorari, def_horaris);
-        else deeply(0, horaris_assig, checkhorari, def_horaris)
+        deeply(0, horaris_assig, checkhorari, def_horaris)
     }
 
     $.each(def_horaris, function(i, horari){
@@ -442,7 +440,7 @@ function addToHorari(horari_assig, checkhorari, group)
             var hora = franjes.indexOf(horari_assig[i].inici);
             var dia = horari_assig[i].dia_setmana - 1;
 
-            if ((checkhorari[dia][hora] != null) || (horari_assig[i].durada >= 2 && checkhorari[dia][hora+1] != null) || (horari_assig[i].durada == 3 && checkhorari[dia][hora+2] != null))
+            if ((checkhorari[dia][hora] != null) || (horari_assig[i].durada >= 2 && checkhorari[dia][hora+1] != null) || (horari_assig[i].durada == 3 && checkhorari[dia][hora+2] != null) /*|| (dia == party + 1)*/)
             {
                 return false;
             }
@@ -470,7 +468,10 @@ function addToHorari(horari_assig, checkhorari, group)
     return true;
 
 }
-
+/*
+Pre: checkhorari és un horari valid
+Post: a checkhorari se l'ha afegit el subgrup de la materia seleccionada, retornant cert si es pot afegir. Retorna fals en cas contrari.
+*/
 function removeToHorari(horari_assig, checkhorari, group)
 {
 
@@ -496,6 +497,10 @@ function removeToHorari(horari_assig, checkhorari, group)
 
     } /// 42      42 - 42%10
 }
+/*
+Pre: checkhorari és un horari valid
+Post: a checkhorari se l'ha subtret el subgrup de la materia seleccionada
+*/
 
 // Valor de la asignatura, horarios de esa asignatura, valor de la tabla
 function deeply(mat, horaris_assig, checkhorari)
@@ -512,14 +517,12 @@ function deeply(mat, horaris_assig, checkhorari)
         return;
     }
     var group = -1;
-
     var isalone = checkifisalone(horaris_assig[mat]);
-    
 
     for (var i = 0; i < horaris_assig[mat].length; ++i)
     {
         
-        if ((horaris_assig[mat][i].grup % 10 == 0 && !isalone) || (horaris_assig[mat][i].grup <= group))
+        if ((horaris_assig[mat][i].grup%10 == 0 && !isalone) || horaris_assig[mat][i].grup <= group)
             continue;
 
         var hora = parseInt(horaris_assig[mat][i].inici.substr(0, 2));
@@ -527,123 +530,44 @@ function deeply(mat, horaris_assig, checkhorari)
 
         if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
 
-        if (dia == party + 1) continue;
-
-        //Check bruh
 
         group = parseInt(horaris_assig[mat][i].grup);
-      //  if(group % 10 == 0)control_grups.push( horaris_assig[mat][i].codi_assig + '_' + group+'P');
-       control_grups.push( horaris_assig[mat][i].codi_assig + '_' + group);
-        var check = addToHorari(horaris_assig[mat], checkhorari, group);
-        if (check)
+        control_grups.push( horaris_assig[mat][i].codi_assig + '_' + group);
+
+        
+        if (!dif_teoria || checkifisonlylabs(horaris_assig[mat]))
         {
-            deeply(mat + 1, horaris_assig, checkhorari);
+            var check = addToHorari(horaris_assig[mat], checkhorari, group) && addToHorari(horaris_assig[mat], checkhorari, group - group%10);
+            if (check) deeply(mat + 1, horaris_assig, checkhorari);
 
+            removeToHorari(horaris_assig[mat], checkhorari, group);
+            removeToHorari(horaris_assig[mat], checkhorari, group - group%10);
+            control_grups.pop();
         }
-        removeToHorari(horaris_assig[mat], checkhorari, group);
-        control_grups.pop();
-
-    }
-
-    return;
-
-}
-
-// Valor de la asignatura, horarios de esa asignatura, valor de la tabla
-function deeply_labs(mat, horaris_assig, checkhorari)
-{
-    if (def_horaris.length == 1000) return;
-    if (mat > horaris_assig.length - 1)
-    {
-        var aux4 = control_grups.slice();
-        var aux3 = jQuery.extend(true, {}, checkhorari); //Solucionar
-
-        def_horaris.push({puntuacio: 0, horari: aux3, grups:aux4});
-        return;
-    }
-    var group = -1;
-
-    var isalone = checkifisalone(horaris_assig[mat]);
-
-    for (var i = 0; i < horaris_assig[mat].length; ++i)
-    {
-
-        if ((horaris_assig[mat][i].grup % 10 == 0 && !isalone) || (horaris_assig[mat][i].grup <= group))
-            continue;
-
-        var hora = parseInt(horaris_assig[mat][i].inici.substr(0, 2));
-        var dia = parseInt(horaris_assig[mat][i].dia_setmana);
-
-        if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
-        if (dia == party + 1) {console.log("skipped");continue;}
-
-        //Check bruh
-
-        group = parseInt(horaris_assig[mat][i].grup);
-
-       control_grups.push( horaris_assig[mat][i].codi_assig + '_' + group);
-        var check = addToHorari(horaris_assig[mat], checkhorari, group);
-        if (check && !isalone)
+        else
         {
-            if (checkifisonlylabs(horaris_assig[mat])) deeply(mat + 1, horaris_assig, checkhorari);
-            else deeply_teoria(mat, horaris_assig, checkhorari);
+            var group_t = -1;
+            for (var j = 0; j < horaris_assig[mat].length; ++j)
+            {
+                if ((horaris_assig[mat][j].grup%10 != 0) || horaris_assig[mat][j].grup <= group_t) continue;
+                
+                var hora = parseInt(horaris_assig[mat][j].inici.substr(0, 2));
+                if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
 
+                group_t = parseInt(horaris_assig[mat][j].grup);
+                
+                var check = addToHorari(horaris_assig[mat], checkhorari, group) && addToHorari(horaris_assig[mat], checkhorari, group_t);
+                if (check) deeply(mat + 1, horaris_assig, checkhorari);
+
+                removeToHorari(horaris_assig[mat], checkhorari, group);
+                removeToHorari(horaris_assig[mat], checkhorari, group_t);
+                control_grups.pop();
+            }
         }
-        else if (isalone) deeply(mat + 1, horaris_assign, checkhorari);
-        removeToHorari(horaris_assig[mat], checkhorari, group);
-        control_grups.pop();
-
-    }
-
-    return;
-
-}
-// Valor de la asignatura, horarios de esa asignatura, valor de la tabla
-function deeply_teoria(mat, horaris_assig, checkhorari)
-{
-    if (def_horaris.length == 1000) return;
-    if (mat > horaris_assig.length - 1)
-    {
-        var aux4 = control_grups.slice();
-        var aux3 = jQuery.extend(true, {}, checkhorari); //Solucionar
-
-        def_horaris.push({puntuacio: 0, horari: aux3, grups:aux4});
-        return;
-    }
-    var group = -1;
-
-    for (var i = 0; i < horaris_assig[mat].length; ++i)
-    {
-
-        if ((horaris_assig[mat][i].grup % 10 != 0) || (horaris_assig[mat][i].grup <= group))
-            continue;
-
-
-        var hora = parseInt(horaris_assig[mat][i].inici.substr(0, 2));
-        var dia = parseInt(horaris_assig[mat][i].dia_setmana);
-
-        if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
-
-        if (dia == party + 1) continue;
-
-        //Check bruh
-
-        group = parseInt(horaris_assig[mat][i].grup);
-
-       control_grups.push( horaris_assig[mat][i].codi_assig + '_' + group);
-        var check = addToHorari(horaris_assig[mat], checkhorari, group);
-        if (check)
-        {
-            deeply_labs(mat + 1, horaris_assig, checkhorari);
-
+        
+        
         }
-        removeToHorari(horaris_assig[mat], checkhorari, group);
-        control_grups.pop();
-
-    }
-
     return;
-
 }
 
 function importancia(horario,grups) {
