@@ -6,11 +6,19 @@ $('#criteris input').change(function() {
     GetHorarios(false);
 });
 
+$('#limit input').change(function() {
+    GetHorarios();
+});
+
 $('#list_quadri').select2({
     placeholder: "Selecciona un quadrimestre"
 });
 
 $('#list_pla').select2({
+    placeholder: "Selecciona un pla"
+});
+
+$('#seleccionar-dia-lliure').select2({
     placeholder: "Selecciona un pla"
 });
 
@@ -65,7 +73,8 @@ var def_horaris;
 var places;
 var list_quadri = new Array();
 var list_pla = new Array();
-var control_grups ;
+var control_grups;
+var limit;
  
 function getAssigs()
 {
@@ -328,6 +337,7 @@ function GetHorarios(quieres_recalcular = true)
     night       = document.getElementById('night').checked;
     dif_teoria  = document.getElementById('diferenciar-teoria-de-practica').checked;
     party       = parseInt(document.getElementById('seleccionar-dia-lliure').value);
+    limit       = parseInt(document.getElementById('limit').value);
 
     if (!morning && !night)
     {
@@ -440,7 +450,7 @@ function addToHorari(horari_assig, checkhorari, group)
             var hora = franjes.indexOf(horari_assig[i].inici);
             var dia = horari_assig[i].dia_setmana - 1;
 
-            if ((checkhorari[dia][hora] != null) || (horari_assig[i].durada >= 2 && checkhorari[dia][hora+1] != null) || (horari_assig[i].durada == 3 && checkhorari[dia][hora+2] != null) /*|| (dia == party + 1)*/)
+            if ((checkhorari[dia][hora] != null) || (horari_assig[i].durada >= 2 && checkhorari[dia][hora+1] != null) || (horari_assig[i].durada == 3 && checkhorari[dia][hora+2] != null) || (dia == party))
             {
                 return false;
             }
@@ -506,7 +516,7 @@ Post: a checkhorari se l'ha subtret el subgrup de la materia seleccionada
 function deeply(mat, horaris_assig, checkhorari)
 {
     
-    if (def_horaris.length == 5000) return;
+    if (def_horaris.length == limit) return;
     if (mat > horaris_assig.length - 1)
     {
       //  var aux4 = jQuery.extend(true,{},control_grups);
@@ -555,7 +565,7 @@ function deeply(mat, horaris_assig, checkhorari)
                 if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
 
                 group_t = parseInt(horaris_assig[mat][j].grup);
-                
+
                 var check = addToHorari(horaris_assig[mat], checkhorari, group) && addToHorari(horaris_assig[mat], checkhorari, group_t);
                 if (check) deeply(mat + 1, horaris_assig, checkhorari);
 
