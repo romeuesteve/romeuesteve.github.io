@@ -1,4 +1,6 @@
 # CronoFIB
+> *No deixis que per mala nota tinguis mal horari.*
+
 Una versió millorada del generador d'horaris de defib amb més funcionalitats.
 
 - Diferenciació de teoria i pràctica ✔️
