@@ -543,7 +543,7 @@ function deeply(mat, horaris_assig, checkhorari)
         var hora = parseInt(horaris_assig[mat][i].inici.substr(0, 2));
         var dia = parseInt(horaris_assig[mat][i].dia_setmana);
 
-        if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
+        if ((hora < 14 && !morning) || (hora >= 16 && !night)) continue;
 		if (sense_places) {
 			var id_places = horaris_assig[mat][0].codi_assig + "_" + horaris_assig[mat][i].grup;
 			if (places[id_places].lliures == 0) continue;
@@ -570,7 +570,7 @@ function deeply(mat, horaris_assig, checkhorari)
                 if ((horaris_assig[mat][j].grup%10 != 0) || horaris_assig[mat][j].grup <= group_t) continue;
                 
                 var hora = parseInt(horaris_assig[mat][j].inici.substr(0, 2));
-                if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
+                if ((hora < 14 && !morning) || (hora >= 16 && !night)) continue;
 		        /*if (sense_places) {
 			        var id_places = horaris_assig[mat][0].codi_assig + "_" + horaris_assig[mat][j].grup;
 			        if (places[id_places].lliures == 0) continue;
