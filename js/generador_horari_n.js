@@ -569,10 +569,10 @@ function deeply(mat, horaris_assig, checkhorari)
                 
                 var hora = parseInt(horaris_assig[mat][j].inici.substr(0, 2));
                 if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
-				if (sense_places) {
-					var id_places = horaris_assig[mat].codi_assig + "_" + horaris_assig[mat][j].grup;
-					if (places[horaris_assig[mat][j]].lliures == 0) continue;
-				}
+		if (sense_places) {
+			var id_places = horaris_assig[mat].codi_assig + "_" + horaris_assig[mat][j].grup;
+			if (places[id_places].lliures == 0) continue;
+		}
 
                 group_t = parseInt(horaris_assig[mat][j].grup);
 
