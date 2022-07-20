@@ -55,6 +55,9 @@ $('#mostrar-ocupacio').click(function() {
 $('#diferenciar-teoria-de-practica').click(function() {
     GetHorarios();
 });
+$('#ocultar-sense-places').click(function() {
+    GetHorarios();
+});
 
 var assigs = new Array(); //Conjunto de asignaturas en el grado
 
@@ -75,6 +78,7 @@ var list_quadri = new Array();
 var list_pla = new Array();
 var control_grups;
 var limit;
+var sense_places;
  
 function getAssigs()
 {
@@ -333,12 +337,14 @@ function GetHorarios(quieres_recalcular = true)
         return;
     }
 
-    morning     = document.getElementById('morning').checked;
-    night       = document.getElementById('night').checked;
-    dif_teoria  = document.getElementById('diferenciar-teoria-de-practica').checked;
-    party       = parseInt(document.getElementById('seleccionar-dia-lliure').value);
-    limit       = parseInt(document.getElementById('limit').value);
-
+    morning      = document.getElementById('morning').checked;
+    night        = document.getElementById('night').checked;
+    dif_teoria   = document.getElementById('diferenciar-teoria-de-practica').checked;
+    party        = parseInt(document.getElementById('seleccionar-dia-lliure').value);
+    limit        = parseInt(document.getElementById('limit').value);
+	//sense_places = document.getElementById('ocultar-sense-places').checked;
+	sense_places = true;
+	
     if (!morning && !night)
     {
         $('#error_msg').html('Escull mat&iacute; i/o tardes.');
@@ -563,6 +569,10 @@ function deeply(mat, horaris_assig, checkhorari)
                 
                 var hora = parseInt(horaris_assig[mat][j].inici.substr(0, 2));
                 if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
+				if (sense_places) {
+					var id_places = horaris_assig[mat].codi_assig + "_" + horaris_assig[mat][j].grup;
+					if (places[horaris_assig[mat][j]].lliures == 0) continue;
+				}
 
                 group_t = parseInt(horaris_assig[mat][j].grup);
 
