@@ -545,7 +545,7 @@ function deeply(mat, horaris_assig, checkhorari)
 
         if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
 		if (sense_places) {
-			var id_places = horaris_assig[mat].codi_assig + "_" + horaris_assig[mat][j].grup;
+			var id_places = horaris_assig[mat].codi_assig + "_" + horaris_assig[mat][i].grup;
 			if (places[id_places].lliures == 0) continue;
 		}
 
