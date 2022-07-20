@@ -342,9 +342,8 @@ function GetHorarios(quieres_recalcular = true)
     dif_teoria   = document.getElementById('diferenciar-teoria-de-practica').checked;
     party        = parseInt(document.getElementById('seleccionar-dia-lliure').value);
     limit        = parseInt(document.getElementById('limit').value);
-	//sense_places = document.getElementById('ocultar-sense-places').checked;
-	sense_places = true;
-	
+	sense_places = document.getElementById('ocultar-sense-places').checked;
+
     if (!morning && !night)
     {
         $('#error_msg').html('Escull mat&iacute; i/o tardes.');
@@ -545,7 +544,10 @@ function deeply(mat, horaris_assig, checkhorari)
         var dia = parseInt(horaris_assig[mat][i].dia_setmana);
 
         if ((hora < 14 && !morning) || (hora >= 14 && !night)) continue;
-
+		if (sense_places) {
+			var id_places = horaris_assig[mat].codi_assig + "_" + horaris_assig[mat][j].grup;
+			if (places[id_places].lliures == 0) continue;
+		}
 
         group = parseInt(horaris_assig[mat][i].grup);
         control_grups.push( horaris_assig[mat][i].codi_assig + '_' + group);
