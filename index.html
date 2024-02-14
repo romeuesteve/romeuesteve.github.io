@@ -1,30 +1,122 @@
 <!DOCTYPE html>
 <html lang="ca">
-    <head>
-        <meta charset="utf-8">
-        <style>
-            img {
-              display: block;
-              margin-left: auto;
-              margin-right: auto;
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <title>CronoFIB</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid rgb(202, 202, 202);
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ffffff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #e8eff2;
+        }
+
+        table td:first-child,
+        table th:first-child {
+            font-weight: bold;
+        }
+
+        #schedule {
+            max-width: 500px;
+            max-height: 100px;
+            overflow-x: auto;
+
+            font-size: 0.6em;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .container>div {
+            flex: 1 0 50%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 600px) {
+            .container>div {
+                flex: 1 0 100%;
             }
-            audio {
-              display: block;
-              margin-left: auto;
-              margin-right: auto;
-            }
-        </style>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <base href="/">
-        <title>Romeu</title>
-    </head>
-    <body style="background-color: black;">
-        <a href="cronofib.html">CronoFIB</a>
-        <img src="https://c.tenor.com/PeMWyY9ruOoAAAAi/killme.gif" alt="nice" style="width:50%;">
-        <audio controls autoplay>
-            <source src="https://archive.org/download/TheChamps-Tequila-1958/TheChamps-Tequila.mp3" type="audio/mpeg" style="width:50%;">
-        Your browser does not support the audio element.
-        </audio>
-          
-    </body>
+        }
+    </style>
+</head>
+
+<body>
+    <h1>⏳CronoFIB⏳</h1>
+    <p>Obté un bon horari!</p>
+
+    <input type="text" id="searchBar" onkeyup="search()" onkeydown="checkForEnter(event)"
+        placeholder="Busca assignatures...">
+
+    <ul id="output"></ul>
+    <div class="container">
+        <div>
+            <div id="selectedAssigsContainer"></div>
+            <input type="checkbox" id="deactivateFullGroups" checked>
+            <label for="deactivateFullGroups">Desactiva grups sense places</label>
+            <script src="searchAssigs.js"></script>
+        </div>
+        <div>
+            <p id="scheduleSelector"></p>
+            <button type="button" id="prevSchedule">Previ</button>
+
+            <label for="scheduleIndex"></label>
+            <input type="number" id="scheduleIndex" min="1" value="1" placeholder="Enter schedule index">
+
+            <button type="button" id="nextSchedule">Següent</button>
+
+            <table id="schedule"></table>
+
+            <input type="checkbox" id="sameGroup" checked>
+            <label for="sameGroup">Mateix grup de teoria i practiques</label>
+            <br>
+            <input type="checkbox" id="showCapacity" checked>
+            <label for="showCapacity">Veure ocupació (Places lliures/Places Totals)</label>
+
+            <button type="button" id="updateCapacity">Actualitza places</button>
+
+            <h4>Ordenació d'horaris</h4>
+            <p>Selecciona entre 1 i 10 les caracteristiques per ordenar de més a menys rellevant</p>
+            <input type="number" id="deadHours" min="0" max="10" value="0" placeholder="Enter value">
+            <label for="deadHours">Evitar hores mortes</label>
+            <br>
+            <input type="number" id="freeDays" min="0" max="10" value="0" placeholder="Enter value">
+            <label for="freeDays">Dia lliure</label>
+
+
+            <script src="scheduleManager.js"></script>
+        </div>
+    </div>
+
+</body>
+
 </html>
