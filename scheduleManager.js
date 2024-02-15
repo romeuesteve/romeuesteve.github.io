@@ -146,13 +146,14 @@ function updateSchedule() {
         for (let day = 1; day <= 5; day++) {
             const cell = row.insertCell(-1);
             if (schedule && schedule[day] && schedule[day][hour]) {
-                if (document.getElementById('showCapacity').checked) {
                 const [assig, group] = schedule[day][hour].split(' ');
-                const capacity = selectedAssigs[assig][group].capacity;
-                const strCapacity = capacity ? ` (${capacity.places_lliures}/${capacity.places_totals})` : "";
-                cell.innerHTML = `${schedule[day][hour]}<br>${strCapacity}`;
+                const strStyle = getStyle(assig);
+                if (document.getElementById('showCapacity').checked) {
+                    const capacity = selectedAssigs[assig][group].capacity;
+                    const strCapacity = capacity ? ` (${capacity.places_lliures}/${capacity.places_totals})` : "";
+                    cell.innerHTML = `${schedule[day][hour]}<br>${strCapacity}`;
                 }
-                else cell.innerHTML = schedule[day][hour];
+                else cell.innerHTML = `<div ${strStyle}>${schedule[day][hour]}</div>`;
             } else {
                 cell.innerHTML = "";
             }
@@ -166,6 +167,42 @@ function updateSchedule() {
     } else {
         document.getElementById('scheduleSelector').textContent = "No s'han trobat horaris possibles";
     }
+}
+
+function string2color(str)
+{
+    var hash = 5381;
+    for (var i = 0; i < str.length; ++i)
+    {
+        hash = ((hash << 5) + hash) + str.charCodeAt(i);
+    }
+
+    var x = Math.sin(hash) * 10000;
+    x = (0xFFFFFF * (x - Math.floor(x))) | 0;
+
+    var col = (new Number(x)).toString(16);
+    while (col.length < 6) col = "0" + col;
+    return "#" + col;
+}
+
+function blackOverColor(bg)
+{
+    /**
+     * Get whether a text should be black or white over a given background color.
+     * @param {string} bg - A color, as a HTML hexadecimal value
+     * @returns {boolean} True if the text is better off black
+     */
+    var r = parseInt(bg.substr(1, 2), 16)
+    var g = parseInt(bg.substr(3, 2), 16)
+    var b = parseInt(bg.substr(5, 2), 16)
+    return 0.213 * r + 0.715 * g + 0.072 * b > 127
+}
+
+function getStyle(str)
+{
+    var bgcolor = string2color(str)
+    var color = blackOverColor(bgcolor) ? 'black' : 'white'
+    return 'style="padding:2px;background-color: ' + bgcolor + '; color: ' + color + '"'
 }
 
 // Sorting functions
@@ -191,7 +228,7 @@ function compareSchedules(a, b) {
                 }
             }
         }
-        return totalDeadHours/3.5;
+        return totalDeadHours / 3.5;
     }
     function calculateFreeDays(schedule) {
         let totalFreeDays = 0;
@@ -207,8 +244,8 @@ function compareSchedules(a, b) {
                 totalFreeDays++;
             }
         }
-        
-        return -totalFreeDays/2.5;
+
+        return -totalFreeDays / 2.5;
     }
 
     // each marks from 0 to 10 how important is to have less dead hours
@@ -218,7 +255,7 @@ function compareSchedules(a, b) {
     result += (calculateDeadHours(a) - calculateDeadHours(b)) * deadHours.value;
     result += (calculateFreeDays(a) - calculateFreeDays(b)) * freeDays.value;
 
-    
+
     return result;
 }
 
@@ -237,7 +274,7 @@ document.getElementById('nextSchedule').addEventListener('click', () => {
     updateSchedule();
 });
 
-window.addEventListener('keydown', function(event) {
+window.addEventListener('keydown', function (event) {
     switch (event.key) {
         case 'ArrowLeft':
             currentSchedule = (currentSchedule - 1 + schedules.length) % schedules.length;
