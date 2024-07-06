@@ -3,7 +3,7 @@ var assigs = null;
 window.selectedAssigs = {};
 
 function getAssigs() {
-    let url = 'https://api.fib.upc.edu/v2/quadrimestres/2023Q2/assignatures/?client_id=' + client_id;
+    let url = 'https://api.fib.upc.edu/v2/quadrimestres/2024Q1/assignatures/?client_id=' + client_id;
     fetch(url, {
         headers: {
             'Accept': 'application/json',
@@ -37,7 +37,7 @@ function search() {
 }
 
 async function getAssigData(assig) {
-    let url = 'https://api.fib.upc.edu/v2/quadrimestres/2023Q2/classes/?codi_assig=' + assig + '&client_id=' + client_id;
+    let url = 'https://api.fib.upc.edu/v2/quadrimestres/2024Q1/classes/?codi_assig=' + assig + '&client_id=' + client_id;
     try {
         const response = await fetch(url, {
             headers: {
