@@ -26,6 +26,8 @@ function getCurrentSemester() {
     return baseUrl;
 }   
 
+getCurrentSemester();
+
 function getAssigs() {
     let url = baseUrl + '/assignatures/?client_id=' + client_id;
     fetch(url, {
