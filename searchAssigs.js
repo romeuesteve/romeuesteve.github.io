@@ -2,8 +2,34 @@ var client_id = '9NYy9WxhUhNtISqa4hGS45fnDsTSoXIp33ZuAsnc';
 var assigs = null;
 window.selectedAssigs = {};
 
+var baseUrl = "https://api.fib.upc.edu/v2/quadrimestres/2024Q1"; // default value
+
+/**
+ * Gets the current semester and calls getAssigs() to get the list of subjects.
+*/
+let url = 'https://api.fib.upc.edu/v2/quadrimestres/actual-horaris/?client_id=' + client_id;
+fetch(url, {
+    headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+})
+    .then(response => response.json())  
+    .then(data => {
+        baseUrl = data.url;
+        // get the base URL without the last character (/)
+        baseUrl = baseUrl.substring(0, baseUrl.length - 1); 
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    }).then(() => {
+        getAssigs();
+    }
+);
+
+
 function getAssigs() {
-    let url = 'https://api.fib.upc.edu/v2/quadrimestres/2023Q2/assignatures/?client_id=' + client_id;
+    let url = baseUrl + '/assignatures/?client_id=' + client_id;
     fetch(url, {
         headers: {
             'Accept': 'application/json',
@@ -37,7 +63,7 @@ function search() {
 }
 
 async function getAssigData(assig) {
-    let url = 'https://api.fib.upc.edu/v2/quadrimestres/2023Q2/classes/?codi_assig=' + assig + '&client_id=' + client_id;
+    let url = baseUrl + '/classes/?codi_assig=' + assig + '&client_id=' + client_id;
     try {
         const response = await fetch(url, {
             headers: {
@@ -216,7 +242,7 @@ function checkForEnter(event) {
     }
 }
 
-getAssigs();
+
 
 // Handle deactivation of full groups
 /*document.getElementById('deactivateFullGroups').onchange = function () {
