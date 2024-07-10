@@ -147,13 +147,14 @@ function updateSchedule() {
             const cell = row.insertCell(-1);
             if (schedule && schedule[day] && schedule[day][hour]) {
                 const [assig, group] = schedule[day][hour].split(' ');
-                const strStyle = getStyle(assig);
+                const strStyle = getStyle(`${assig}`);
                 if (document.getElementById('showCapacity').checked) {
                     const capacity = selectedAssigs[assig][group].capacity;
                     const strCapacity = capacity ? ` (${capacity.places_lliures}/${capacity.places_totals})` : "";
-                    cell.innerHTML = `${schedule[day][hour]}<br>${strCapacity}`;
+                    cell.innerHTML = `<div ${strStyle}>${schedule[day][hour]}<br>${strCapacity}</div>`;
+                } else {
+                    cell.innerHTML = `<div ${strStyle}>${schedule[day][hour]}</div>`;
                 }
-                else cell.innerHTML = `<div ${strStyle}>${schedule[day][hour]}</div>`;
             } else {
                 cell.innerHTML = "";
             }
@@ -169,35 +170,76 @@ function updateSchedule() {
     }
 }
 
-function string2color(str)
-{
-    var hash = 5381;
-    for (var i = 0; i < str.length; ++i)
-    {
+function string2color(str) {
+    // Calculate hash value
+    var hash = 5382;
+    for (var i = 0; i < str.length; ++i) {
         hash = ((hash << 5) + hash) + str.charCodeAt(i);
     }
 
-    var x = Math.sin(hash) * 10000;
-    x = (0xFFFFFF * (x - Math.floor(x))) | 0;
+    // Use the hash value to generate HSL values
+    var h = (hash % 360);       // Hue value between 0 and 360
+    var s = 80;                 // Saturation fixed at 80%
+    var l = 40 + (hash % 3)*20;   // Lightness varies oscillates between 40, 60 and 80
 
-    var col = (new Number(x)).toString(16);
-    while (col.length < 6) col = "0" + col;
+    // Function to convert HSL to RGB
+    function hslToRgb(h, s, l) {
+        var r, g, b;
+
+        if (s == 0) {
+            r = g = b = l; // achromatic
+        } else {
+            var hue2rgb = function hue2rgb(p, q, t) {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            };
+
+            var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            var p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+
+        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+    }
+
+    // Function to convert RGB to hex
+    function rgbToHex(r, g, b) {
+        return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    }
+
+    // Convert HSL to RGB
+    var rgb = hslToRgb(h / 360, s / 100, l / 100);
+
+    // Convert RGB to hex
+    var col = rgbToHex(rgb[0], rgb[1], rgb[2]);
+
+    // Exceptions
+    var excepcions = {'AL-F': '#781919'};
+    if (excepcions[str] !== undefined) {
+        return excepcions[str];
+    }
     return "#" + col;
 }
 
-function blackOverColor(bg)
-{
-    /**
-     * Get whether a text should be black or white over a given background color.
-     * @param {string} bg - A color, as a HTML hexadecimal value
-     * @returns {boolean} True if the text is better off black
-     */
-    var r = parseInt(bg.substr(1, 2), 16)
-    var g = parseInt(bg.substr(3, 2), 16)
-    var b = parseInt(bg.substr(5, 2), 16)
-    return 0.213 * r + 0.715 * g + 0.072 * b > 127
+
+function blackOverColor(bg) {
+    var r = parseInt(bg.substr(1, 2), 16);
+    var g = parseInt(bg.substr(3, 2), 16);
+    var b = parseInt(bg.substr(5, 2), 16);
+    return 0.213 * r + 0.715 * g + 0.072 * b > 127;
 }
 
+/**
+ * Estil d'una caixa d'horari
+ * @param str Nom de l'assignatura
+ * @returns {string} Retorna el parametre style per a una assignatura donada
+ */
 function getStyle(str)
 {
     var bgcolor = string2color(str)
