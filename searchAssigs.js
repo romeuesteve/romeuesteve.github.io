@@ -27,7 +27,6 @@ fetch(url, {
     }
 );
 
-
 function getAssigs() {
     let url = baseUrl + '/assignatures/?client_id=' + client_id;
     fetch(url, {
@@ -49,17 +48,123 @@ function search() {
     let filtered = assigs.filter(item => item.includes(input));
     let sorted = filtered.sort((a, b) => (a === input ? -1 : b === input ? 1 : 0));
 
-    let output = document.getElementById('output');
-    output.innerHTML = ''; // clear the output before adding new results
+    let dropdown = document.getElementById('dropdown');
+    dropdown.innerHTML = ''; // clear the dropdown before adding new results
+
+    // Ensure the dropdown width matches the search bar width
+    let searchBar = document.getElementById('searchBar');
+    dropdown.style.width = searchBar.offsetWidth + "px";
 
     sorted.forEach(item => {
         let li = document.createElement('li');
         li.textContent = item;
-        output.appendChild(li);
+        li.onclick = () => {
+            if (!(item in selectedAssigs)) {
+                document.getElementById('searchBar').value = item;
+                dropdown.classList.remove('show');
+                addAssig(item);
+            }
+        };
+        dropdown.appendChild(li);
     });
     if (input === '') {
-        output.innerHTML = '';
+        dropdown.classList.remove('show');
+    } else {
+        dropdown.classList.add('show');
     }
+}
+
+function checkForEnter(event) {
+    if (assigs === null) return;
+    if (event.key === 'Enter') {
+        let input = document.getElementById('searchBar').value.toUpperCase();
+        let filtered = assigs.filter(item => item.includes(input));
+        let sorted = filtered.sort((a, b) => (a === input ? -1 : b === input ? 1 : 0));
+        let closestMatch = sorted.find(item => item.includes(input));
+        if (closestMatch && !(closestMatch in selectedAssigs)) {
+            addAssig(closestMatch);
+            document.getElementById('searchBar').value = '';
+            document.getElementById('dropdown').classList.remove('show');
+        }
+    }
+}
+
+function addAssig(assig) {
+    if (assig in selectedAssigs) {
+        return; // Prevent adding duplicates
+    }
+    
+    selectedAssigs[assig] = {};
+    let selectedAssigsContainer = document.getElementById('selectedAssigsContainer');
+
+    // Create a new div element
+    let div = document.createElement('div');
+    let div2 = document.createElement('div');
+    div2.style.display = 'flex';
+    div2.style.justifyContent = 'space-between';
+    div2.style.alignItems = 'center';
+
+    // Create a new h2 element
+    let h2 = document.createElement('h2');
+    h2.textContent = assig;
+
+    // Create a new button element
+    let button = document.createElement('button');
+    button.textContent = 'X';
+    button.onclick = function () {
+        if (assig in selectedAssigs) {
+            delete selectedAssigs[assig];
+            startGeneratingSchedules();
+        }
+        div.remove();
+    };
+    div2.appendChild(h2);
+    div2.appendChild(button);
+    div.appendChild(div2);
+    selectedAssigsContainer.appendChild(div);
+
+    getAssigData(assig).then(data => {
+        getCapacity().then(capacity_data => {
+            let assigGroups = getAssigGroups(data);
+            assigGroups.forEach(group => {
+                group.forEach(subgroup => {
+                    let checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = assig + subgroup;
+                    checkbox.name = subgroup;
+                    checkbox.checked = true;
+                    checkbox.onclick = function () {
+                        if (checkbox.checked) {
+                            selectedAssigs[assig][subgroup] = {};
+                            selectedAssigs[assig][subgroup].schedule = getAssigHours(data, subgroup);
+                            selectedAssigs[assig][subgroup].capacity = getAssigCapacity(capacity_data, assig, subgroup);
+                        } else {
+                            delete selectedAssigs[assig][subgroup];
+                        }
+                        startGeneratingSchedules();
+                    };
+
+                    let label = document.createElement('label');
+                    label.htmlFor = checkbox.id;
+                    label.appendChild(document.createTextNode(subgroup));
+
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+
+                    selectedAssigs[assig][subgroup] = {};
+                    selectedAssigs[assig][subgroup].schedule = getAssigHours(data, subgroup);
+                    selectedAssigs[assig][subgroup].capacity = getAssigCapacity(capacity_data, assig, subgroup);
+                    if (isDeactivateFullGroupsEnabled() && selectedAssigs[assig][subgroup].capacity && selectedAssigs[assig][subgroup].capacity.places_lliures === 0) {
+                        checkbox.checked = false;
+                        checkbox.disabled = true;
+                        delete selectedAssigs[assig][subgroup];
+                    }
+                });
+                div.appendChild(document.createElement('br'));
+            });
+            startGeneratingSchedules();
+        });
+    });
 }
 
 async function getAssigData(assig) {
@@ -268,7 +373,6 @@ window.onload = function () {
                 updateCapacityElement.disabled = false;
             }).catch(error => {
                 console.error('Error:', error);
-
                 // Re-enable the button in case of error
                 updateCapacityElement.disabled = false;
             });
@@ -295,14 +399,12 @@ deactivateFullGroupsCheckbox.addEventListener('change', function () {
             });
         }
         this.disabled = false;
-    }
-    else {
+    } else {
         this.disabled = true;
         // Iterate over all checkboxes and deactivate full groups
         getCapacity().then(capacity_data => {
             for (let assig in selectedAssigs) {
                 let assigElements = document.querySelectorAll('input[id^="' + assig + '"]');
-
                 assigElements.forEach(checkbox => {
                     let group = checkbox.name;
                     let capacity = getAssigCapacity(capacity_data, assig, group);
