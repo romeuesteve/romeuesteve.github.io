@@ -259,6 +259,72 @@ function isDeactivateFullGroupsEnabled() {
     return document.getElementById('deactivateFullGroups').checked;
 }
 
+// Update capacity button
+window.onload = function () {
+    const updateCapacityElement = document.getElementById('updateCapacity');
+    updateCapacityElement.onclick = handleUpdateCapacity;
+
+    // Get the deactivateFullGroups checkbox
+    const deactivateFullGroupsCheckbox = document.getElementById('deactivateFullGroups');
+    // Add a 'change' event listener to the checkbox
+    deactivateFullGroupsCheckbox.addEventListener('change', handleDeactivateFullGroups);
+};
+
+async function handleUpdateCapacity() {
+    const updateCapacityElement = this;
+    updateCapacityElement.disabled = true;
+
+    try {
+        const capacity_data = await getCapacity();
+        Object.entries(selectedAssigs).forEach(([assig, groups]) => {
+            Object.keys(groups).forEach(group => {
+                selectedAssigs[assig][group].capacity = getAssigCapacity(capacity_data, assig, group);
+            });
+        });
+        updateSchedule();
+    } catch (error) {
+        console.error('Error:', error);
+    } finally {
+        updateCapacityElement.disabled = false;
+    }
+}
+
+async function handleDeactivateFullGroups() {
+    this.disabled = true;
+
+    if (!this.checked) {
+        updateCheckboxes(checkbox => {
+            checkbox.disabled = false;
+        });
+    } else {
+        try {
+            const capacity_data = await getCapacity();
+            updateCheckboxes((checkbox, assig, group) => {
+                const capacity = getAssigCapacity(capacity_data, assig, group);
+                if (capacity && capacity.places_lliures === 0) {
+                    checkbox.checked = false;
+                    checkbox.disabled = true;
+                    delete selectedAssigs[assig][group];
+                }
+            });
+            startGeneratingSchedules();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+    this.disabled = false;
+}
+
+function updateCheckboxes(updateFunction) {
+    Object.keys(selectedAssigs).forEach(assig => {
+        const assigElements = document.querySelectorAll(`input[id^="${assig}"]`);
+        assigElements.forEach(checkbox => {
+            const group = checkbox.name;
+            updateFunction(checkbox, assig, group);
+        });
+    });
+}
+
 function updateURLParams() {
     let baseURL = window.location.origin + window.location.pathname;
     let newURL = baseURL;
