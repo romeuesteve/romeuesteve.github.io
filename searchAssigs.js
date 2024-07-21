@@ -90,31 +90,26 @@ function checkForEnter(event) {
     }
 }
 
-function addAssig(assig) {
+function addAssig(assig, selectedGroups = null) {
     if (assig in selectedAssigs) {
         return; // Prevent adding duplicates
     }
-    
+   
     selectedAssigs[assig] = {};
-    updateURLParams();
     
     let selectedAssigsContainer = document.getElementById('selectedAssigsContainer');
-
     // Create a new div element
     let div = document.createElement('div');
     let div2 = document.createElement('div');
     div2.style.display = 'flex';
     div2.style.justifyContent = 'space-between';
     div2.style.alignItems = 'center';
-
     // Create a new h2 element
     let h2 = document.createElement('h2');
     h2.textContent = assig;
-
     // Create a new button element
     let button = document.createElement('button');
     button.textContent = '🗑️';
-
     // Add a click event listener to remove the assignment
     button.onclick = function () {
         if (assig in selectedAssigs) {
@@ -138,7 +133,10 @@ function addAssig(assig) {
                     checkbox.type = 'checkbox';
                     checkbox.id = assig + subgroup;
                     checkbox.name = subgroup;
-                    checkbox.checked = true;
+                    
+                    // Check if this subgroup should be checked
+                    checkbox.checked = selectedGroups ? selectedGroups.includes(subgroup) : true;
+
                     checkbox.onclick = function () {
                         if (checkbox.checked) {
                             selectedAssigs[assig][subgroup] = {};
@@ -147,20 +145,23 @@ function addAssig(assig) {
                         } else {
                             delete selectedAssigs[assig][subgroup];
                         }
+                        updateURLParams();
                         startGeneratingSchedules();
                     };
 
                     let label = document.createElement('label');
                     label.htmlFor = checkbox.id;
                     label.appendChild(document.createTextNode(subgroup));
-
                     div.appendChild(checkbox);
                     div.appendChild(label);
 
-                    selectedAssigs[assig][subgroup] = {};
-                    selectedAssigs[assig][subgroup].schedule = getAssigHours(data, subgroup);
-                    selectedAssigs[assig][subgroup].capacity = getAssigCapacity(capacity_data, assig, subgroup);
-                    if (isDeactivateFullGroupsEnabled() && selectedAssigs[assig][subgroup].capacity && selectedAssigs[assig][subgroup].capacity.places_lliures === 0) {
+                    if (checkbox.checked) {
+                        selectedAssigs[assig][subgroup] = {};
+                        selectedAssigs[assig][subgroup].schedule = getAssigHours(data, subgroup);
+                        selectedAssigs[assig][subgroup].capacity = getAssigCapacity(capacity_data, assig, subgroup);
+                    }
+
+                    if (isDeactivateFullGroupsEnabled() && selectedAssigs[assig][subgroup] && selectedAssigs[assig][subgroup].capacity && selectedAssigs[assig][subgroup].capacity.places_lliures === 0) {
                         checkbox.checked = false;
                         checkbox.disabled = true;
                         delete selectedAssigs[assig][subgroup];
@@ -168,6 +169,7 @@ function addAssig(assig) {
                 });
                 div.appendChild(document.createElement('br'));
             });
+            updateURLParams();
             startGeneratingSchedules();
         });
     });
@@ -260,19 +262,41 @@ function isDeactivateFullGroupsEnabled() {
 function updateURLParams() {
     let baseURL = window.location.origin + window.location.pathname;
     let newURL = baseURL;
-    let keys = Object.keys(selectedAssigs).sort();
-    if (keys.length > 0) {
-        newURL += '?';
-        keys.forEach((key, index) => {
-            if (index > 0) newURL += '&';
-            newURL += 'assig=' + encodeURIComponent(key);
-        });
+    let params = [];
+    
+    for (let assig in selectedAssigs) {
+        for (let group in selectedAssigs[assig]) {
+            if (selectedAssigs[assig][group]) {
+                params.push(`a=${encodeURIComponent(assig)}_${encodeURIComponent(group)}`);
+            }
+        }
     }
+    
+    if (params.length > 0) {
+        newURL += '?' + params.join('&');
+    }
+    
     window.history.replaceState(null, '', newURL);
 }
 
 function loadAssigsFromURL() {
     let params = new URLSearchParams(window.location.search);
-    let assigs = params.getAll('assig');
-    assigs.forEach(assig => addAssig(assig));
+    let assigGroups = params.getAll('a');
+    
+    let assigMap = {};
+    
+    assigGroups.forEach(assigGroup => {
+        let [assig, group] = assigGroup.split('_');
+        assig = decodeURIComponent(assig);
+        group = decodeURIComponent(group);
+        
+        if (!assigMap[assig]) {
+            assigMap[assig] = [];
+        }
+        assigMap[assig].push(group);
+    });
+    
+    for (let assig in assigMap) {
+        addAssig(assig, assigMap[assig]);
+    }
 }
