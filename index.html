@@ -7,106 +7,106 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <title>CronoFIB</title>
     <style>
-body {
-    font-family: Arial, sans-serif;
-}
+        body {
+            font-family: Arial, sans-serif;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-table,
-th,
-td {
-    border: 1px solid rgb(202, 202, 202);
-}
+        table,
+        th,
+        td {
+            border: 1px solid rgb(202, 202, 202);
+        }
 
-th,
-td {
-    padding: 10px;
-    text-align: center;
-}
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+        }
 
-th {
-    background-color: #ffffff;
-}
+        th {
+            background-color: #ffffff;
+        }
 
-tr:nth-child(even) {
-    background-color: #e8eff2;
-}
+        tr:nth-child(even) {
+            background-color: #e8eff2;
+        }
 
-table td:first-child,
-table th:first-child {
-    font-weight: bold;
-}
+        table td:first-child,
+        table th:first-child {
+            font-weight: bold;
+        }
 
-#schedule {
-    max-width: 500px;
-    max-height: 100px;
-    overflow-x: auto;
-    font-size: 0.6em;
-}
+        #schedule {
+            max-width: 500px;
+            max-height: 100px;
+            overflow-x: auto;
+            font-size: 0.6em;
+        }
 
-.container {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-}
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
 
-.container>div {
-    flex: 1 0 50%;
-    padding: 10px;
-    box-sizing: border-box;
-}
+        .container>div {
+            flex: 1 0 50%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
 
-@media (max-width: 600px) {
-    .container>div {
-        flex: 1 0 100%;
-    }
-}
+        @media (max-width: 600px) {
+            .container>div {
+                flex: 1 0 100%;
+            }
+        }
 
-/* Dropdown container */
-.dropdown {
-    position: absolute;
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    max-height: 200px;
-    overflow-y: auto;
-    background-color: white;
-    z-index: 1000;
-    display: none; /* Hide by default */
-}
+        /* Dropdown container */
+        .dropdown {
+            position: absolute;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: white;
+            z-index: 1000;
+            display: none;
+            /* Hide by default */
+        }
 
-.dropdown.show {
-    display: block; /* Show when active */
-}
+        .dropdown.show {
+            display: block;
+            /* Show when active */
+        }
 
-.dropdown li {
-    padding: 10px;
-    cursor: pointer;
-}
+        .dropdown li {
+            padding: 10px;
+            cursor: pointer;
+        }
 
-.dropdown li:hover {
-    background-color: #f0f0f0;
-}
+        .dropdown li:hover {
+            background-color: #f0f0f0;
+        }
 
-.show {
-    display: block;
-}
-
+        .show {
+            display: block;
+        }
     </style>
 </head>
 
 <body>
     <h1>⏳CronoFIB⏳</h1>
-    <p>Obté un bon horari!</p>
+    <p>Obtén un bon horari!</p>
 
-    <input type="text" id="searchBar" onkeyup="search()" onkeydown="checkForEnter(event)"
-        placeholder="Busca assignatures...">
-    <div id="dropdown" class="dropdown"></div>  
+    <input type="text" id="searchBar" onkeyup="search()" onkeydown="checkForEnter(event)" placeholder="Busca assignatures...">
+    <div id="dropdown" class="dropdown"></div>
     <ul id="output"></ul>
     <div class="container">
         <div>
@@ -146,7 +146,6 @@ table th:first-child {
             <script src="scheduleManager.js"></script>
         </div>
     </div>
-
 </body>
 
 </html>
