@@ -24,6 +24,7 @@ fetch(url, {
         console.error('Error:', error);
     }).then(() => {
         getAssigs();
+        loadAssigsFromURL();
     }
 );
 
@@ -95,6 +96,8 @@ function addAssig(assig) {
     }
     
     selectedAssigs[assig] = {};
+    updateURLParams();
+    
     let selectedAssigsContainer = document.getElementById('selectedAssigsContainer');
 
     // Create a new div element
@@ -110,10 +113,13 @@ function addAssig(assig) {
 
     // Create a new button element
     let button = document.createElement('button');
-    button.textContent = 'X';
+    button.textContent = '🗑️';
+
+    // Add a click event listener to remove the assignment
     button.onclick = function () {
         if (assig in selectedAssigs) {
             delete selectedAssigs[assig];
+            updateURLParams();
             startGeneratingSchedules();
         }
         div.remove();
@@ -231,192 +237,42 @@ function getAssigHours(data, group) {
         let dia_setmana = item_1.dia_setmana;
         let inici = parseInt(item_1.inici.split(':')[0]);
         for (let i = 0; i < item_1.durada; i++) {
-            if (hours[dia_setmana]) {
-                hours[dia_setmana].push(inici + i);
+            let hour = inici + i;
+            if (!hours[dia_setmana]) {
+                hours[dia_setmana] = new Set();
             }
-            else {
-                hours[dia_setmana] = [inici + i];
-            }
+            hours[dia_setmana].add(hour);
         }
     });
-    return hours;
+    let result_2 = {};
+    Object.keys(hours).forEach(key => {
+        let value = Array.from(hours[key]);
+        value.sort((a, b) => a - b);
+        result_2[key] = value;
+    });
+    return result_2;
 }
 
 function isDeactivateFullGroupsEnabled() {
     return document.getElementById('deactivateFullGroups').checked;
 }
 
-function checkForEnter(event) {
-    if (assigs === null) return;
-
-    if (event.key === 'Enter') {
-        let input = document.getElementById('searchBar').value.toUpperCase();
-        let filtered = assigs.filter(item => item.includes(input));
-        let sorted = filtered.sort((a, b) => (a === input ? -1 : b === input ? 1 : 0));
-
-        let closestMatch = sorted.find(item => item.includes(input));
-
-        if (closestMatch && !(closestMatch in selectedAssigs)) {
-            selectedAssigs[closestMatch] = {};
-            document.getElementById('searchBar').value = '';
-
-            // Create a new div element
-            let div = document.createElement('div');
-            let div2 = document.createElement('div');
-            div2.style.display = 'flex';
-            div2.style.justifyContent = 'space-between';
-            div2.style.alignItems = 'center';
-
-            // Create a new h2 element
-            let h2 = document.createElement('h2');
-            h2.textContent = closestMatch;
-
-            // Create a new button element
-            let button = document.createElement('button');
-            button.textContent = 'X';
-            button.onclick = function () {
-                // Remove the h2 and button elements from the DOM
-                if (closestMatch in selectedAssigs) {
-                    delete selectedAssigs[closestMatch];
-                    startGeneratingSchedules();
-                }
-
-                div.remove();
-            };
-            div2.appendChild(h2);
-            div2.appendChild(button);
-
-            div.appendChild(div2);
-
-            // Append the div element to the DOM
-            document.getElementById('selectedAssigsContainer').appendChild(div);
-
-            let assigGroups = null;
-
-            getAssigData(closestMatch).then(data => {
-                getCapacity().then(capacity_data => {
-                    assigGroups = getAssigGroups(data);
-
-                    assigGroups.forEach(group => {
-                        group.forEach(subgroup => {
-                            // Create a new checkbox element
-                            let checkbox = document.createElement('input');
-                            checkbox.type = 'checkbox';
-                            checkbox.id = closestMatch + subgroup;
-                            checkbox.name = subgroup;
-                            checkbox.checked = true;
-
-                            checkbox.onclick = function () {
-                                if (checkbox.checked) {
-                                    selectedAssigs[closestMatch][subgroup] = {};
-                                    selectedAssigs[closestMatch][subgroup].schedule = getAssigHours(data, subgroup);
-                                    selectedAssigs[closestMatch][subgroup].capacity = getAssigCapacity(capacity_data, closestMatch, subgroup);
-                                }
-                                else {
-                                    delete selectedAssigs[closestMatch][subgroup];
-                                }
-                                startGeneratingSchedules();
-                            };
-
-                            // Create a new label element
-                            let label = document.createElement('label');
-                            label.htmlFor = checkbox.id;
-                            label.appendChild(document.createTextNode(subgroup));
-
-                            // Append the checkbox and label elements to the DOM
-                            div.appendChild(checkbox);
-                            div.appendChild(label);
-
-                            selectedAssigs[closestMatch][subgroup] = {};
-                            selectedAssigs[closestMatch][subgroup].schedule = getAssigHours(data, subgroup);
-                            selectedAssigs[closestMatch][subgroup].capacity = getAssigCapacity(capacity_data, closestMatch, subgroup);
-                            if (isDeactivateFullGroupsEnabled() && selectedAssigs[closestMatch][subgroup].capacity && selectedAssigs[closestMatch][subgroup].capacity.places_lliures === 0) {
-
-                                checkbox.checked = false;
-                                checkbox.disabled = true;
-                                delete selectedAssigs[closestMatch][subgroup];
-                            }
-                        });
-                        div.appendChild(document.createElement('br'));
-
-                    });
-                    startGeneratingSchedules();
-                });
-            });
-        }
-    }
-}
-
-
-
-// Handle deactivation of full groups
-/*document.getElementById('deactivateFullGroups').onchange = function () {
-    startGeneratingSchedules();
-};*/
-
-// Update capacity button
-window.onload = function () {
-    var updateCapacityElement = document.getElementById('updateCapacity');
-    if (updateCapacityElement) {
-        updateCapacityElement.onclick = function () {
-            // disable the button
-            updateCapacityElement.disabled = true;
-
-            getCapacity().then(capacity_data => {
-                for (let assig in selectedAssigs) {
-                    for (let group in selectedAssigs[assig]) {
-                        selectedAssigs[assig][group].capacity = getAssigCapacity(capacity_data, assig, group);
-                    }
-                }
-                updateSchedule();
-                // Re-enable the button
-                updateCapacityElement.disabled = false;
-            }).catch(error => {
-                console.error('Error:', error);
-                // Re-enable the button in case of error
-                updateCapacityElement.disabled = false;
-            });
-        };
-    } else {
-        console.error("Element with id 'updateCapacity' not found");
-    }
-};
-
-// Get the deactivateFullGroups checkbox
-let deactivateFullGroupsCheckbox = document.getElementById('deactivateFullGroups');
-
-// Add a 'change' event listener to the checkbox
-deactivateFullGroupsCheckbox.addEventListener('change', function () {
-    // If the checkbox is unchecked
-    if (!this.checked) {
-        this.disabled = true;
-        // Iterate over all checkboxes
-        for (let assig in selectedAssigs) {
-            let assigElements = document.querySelectorAll('input[id^="' + assig + '"]');
-            assigElements.forEach(checkbox => {
-                // Set the checkbox to checked and enabled
-                checkbox.disabled = false;
-            });
-        }
-        this.disabled = false;
-    } else {
-        this.disabled = true;
-        // Iterate over all checkboxes and deactivate full groups
-        getCapacity().then(capacity_data => {
-            for (let assig in selectedAssigs) {
-                let assigElements = document.querySelectorAll('input[id^="' + assig + '"]');
-                assigElements.forEach(checkbox => {
-                    let group = checkbox.name;
-                    let capacity = getAssigCapacity(capacity_data, assig, group);
-                    if (capacity && capacity.places_lliures === 0) {
-                        checkbox.checked = false;
-                        checkbox.disabled = true;
-                        delete selectedAssigs[assig][group];
-                    }
-                });
-            }
-            this.disabled = false;
-            startGeneratingSchedules();
+function updateURLParams() {
+    let baseURL = window.location.origin + window.location.pathname;
+    let newURL = baseURL;
+    let keys = Object.keys(selectedAssigs).sort();
+    if (keys.length > 0) {
+        newURL += '?';
+        keys.forEach((key, index) => {
+            if (index > 0) newURL += '&';
+            newURL += 'assig=' + encodeURIComponent(key);
         });
     }
-});
+    window.history.replaceState(null, '', newURL);
+}
+
+function loadAssigsFromURL() {
+    let params = new URLSearchParams(window.location.search);
+    let assigs = params.getAll('assig');
+    assigs.forEach(assig => addAssig(assig));
+}
