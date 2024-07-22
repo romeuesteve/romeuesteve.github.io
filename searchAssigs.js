@@ -94,22 +94,30 @@ function addAssig(assig, selectedGroups = null) {
     if (assig in selectedAssigs) {
         return; // Prevent adding duplicates
     }
-   
+
     selectedAssigs[assig] = {};
-    
+
     let selectedAssigsContainer = document.getElementById('selectedAssigsContainer');
     // Create a new div element
     let div = document.createElement('div');
+    div.className = 'assig-container'; // Add class for styling and animation
+ 
+    const bgcolor = div.style.backgroundColor = string2color(assig);
+
     let div2 = document.createElement('div');
     div2.style.display = 'flex';
     div2.style.justifyContent = 'space-between';
     div2.style.alignItems = 'center';
+
     // Create a new h2 element
     let h2 = document.createElement('h2');
     h2.textContent = assig;
+    const color = h2.style.color = blackOverColor(bgcolor) ? 'black' : 'white'
+
     // Create a new button element
     let button = document.createElement('button');
     button.textContent = '🗑️';
+
     // Add a click event listener to remove the assignment
     button.onclick = function () {
         if (assig in selectedAssigs) {
@@ -119,10 +127,16 @@ function addAssig(assig, selectedGroups = null) {
         }
         div.remove();
     };
+
     div2.appendChild(h2);
     div2.appendChild(button);
     div.appendChild(div2);
     selectedAssigsContainer.appendChild(div);
+
+    // Trigger animation
+    setTimeout(function() {
+        div.classList.add('show');
+    }, 10); // Slight delay to ensure the element is added to the DOM before the class is added
 
     getAssigData(assig).then(data => {
         getCapacity().then(capacity_data => {
@@ -133,7 +147,7 @@ function addAssig(assig, selectedGroups = null) {
                     checkbox.type = 'checkbox';
                     checkbox.id = assig + subgroup;
                     checkbox.name = subgroup;
-                    
+
                     // Check if this subgroup should be checked
                     checkbox.checked = selectedGroups ? selectedGroups.includes(subgroup) : true;
 
@@ -150,6 +164,7 @@ function addAssig(assig, selectedGroups = null) {
                     };
 
                     let label = document.createElement('label');
+                    label.style.color = color;
                     label.htmlFor = checkbox.id;
                     label.appendChild(document.createTextNode(subgroup));
                     div.appendChild(checkbox);
@@ -174,6 +189,7 @@ function addAssig(assig, selectedGroups = null) {
         });
     });
 }
+
 
 async function getAssigData(assig) {
     let url = baseUrl + '/classes/?codi_assig=' + assig + '&client_id=' + client_id;
@@ -212,52 +228,33 @@ function getAssigCapacity(data, assig, group) {
     if (!result) return null;
     else return { "places_lliures": result.places_lliures, "places_totals": result.places_totals };
 }
+const getAssigGroups = (data) => {
+    const groups = data.results.reduce((acc, item) => {
+        const num = Number(item.grup);
+        const key = Math.floor(num / 10) * 10;
+        if (!acc[key]) acc[key] = new Set();
+        acc[key].add(item.grup);
+        return acc;
+    }, {});
 
-function getAssigGroups(data) {
-    let result_1 = data.results.map(item => item.grup);
-    let groups = {};
-    result_1.forEach(numStr => {
-        let num = Number(numStr);
-        let key = Math.floor(num / 10) * 10;
-        if (!groups[key]) {
-            groups[key] = new Set();
-        }
-        groups[key].add(numStr);
-    });
-    let sortedAndClassified = Object.values(groups).map(set => {
-        let array = Array.from(set);
-        array.sort((a, b) => Number(a) - Number(b));
-        return array;
-    });
-    return sortedAndClassified;
-}
+    return Object.values(groups).map(set => Array.from(set).sort((a, b) => Number(a) - Number(b)));
+};
 
-function getAssigHours(data, group) {
-    let hours = {};
-    let result_1 = data.results.filter(item => item.grup === group);
-    result_1.forEach(item_1 => {
-        let dia_setmana = item_1.dia_setmana;
-        let inici = parseInt(item_1.inici.split(':')[0]);
-        for (let i = 0; i < item_1.durada; i++) {
-            let hour = inici + i;
-            if (!hours[dia_setmana]) {
-                hours[dia_setmana] = new Set();
+const getAssigHours = (data, group) => {
+    return data.results
+        .filter(item => item.grup === group)
+        .reduce((hours, item) => {
+            const dia_setmana = item.dia_setmana;
+            const inici = parseInt(item.inici.split(':')[0]);
+            if (!hours[dia_setmana]) hours[dia_setmana] = new Set();
+            for (let i = 0; i < item.durada; i++) {
+                hours[dia_setmana].add(inici + i);
             }
-            hours[dia_setmana].add(hour);
-        }
-    });
-    let result_2 = {};
-    Object.keys(hours).forEach(key => {
-        let value = Array.from(hours[key]);
-        value.sort((a, b) => a - b);
-        result_2[key] = value;
-    });
-    return result_2;
-}
+            return hours;
+        }, {});
+};
 
-function isDeactivateFullGroupsEnabled() {
-    return document.getElementById('deactivateFullGroups').checked;
-}
+const isDeactivateFullGroupsEnabled = () => document.getElementById('deactivateFullGroups').checked;
 
 // Update capacity button
 window.onload = function () {
@@ -271,7 +268,7 @@ window.onload = function () {
 };
 
 async function handleUpdateCapacity() {
-    const updateCapacityElement = this;
+    const updateCapacityElement = this;F
     updateCapacityElement.disabled = true;
 
     try {
