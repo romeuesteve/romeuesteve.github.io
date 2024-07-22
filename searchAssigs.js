@@ -101,7 +101,7 @@ function addAssig(assig, selectedGroups = null) {
     // Create a new div element
     let div = document.createElement('div');
     div.className = 'assig-container'; // Add class for styling and animation
- 
+
     const bgcolor = div.style.backgroundColor = string2color(assig);
 
     let div2 = document.createElement('div');
@@ -125,7 +125,11 @@ function addAssig(assig, selectedGroups = null) {
             updateURLParams();
             startGeneratingSchedules();
         }
-        div.remove();
+        // Animate removal
+        div.classList.add('collapsing');
+        setTimeout(() => {
+            div.remove();
+        }, 200); // Match the transition duration
     };
 
     div2.appendChild(h2);
@@ -184,6 +188,11 @@ function addAssig(assig, selectedGroups = null) {
                 });
                 div.appendChild(document.createElement('br'));
             });
+            // Trigger height adjustment animation
+            setTimeout(() => {
+                div.style.maxHeight = div.scrollHeight + 'px';
+            }, 10); // Slight delay to ensure the element's children are rendered
+            
             updateURLParams();
             startGeneratingSchedules();
         });
