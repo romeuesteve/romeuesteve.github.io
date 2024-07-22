@@ -104,10 +104,8 @@ function addAssig(assig, selectedGroups = null) {
 
     const bgcolor = div.style.backgroundColor = string2color(assig);
 
-    let div2 = document.createElement('div');
-    div2.style.display = 'flex';
-    div2.style.justifyContent = 'space-between';
-    div2.style.alignItems = 'center';
+    let headerDiv = document.createElement('div');
+    headerDiv.className = 'assig-header';
 
     // Create a new h2 element
     let h2 = document.createElement('h2');
@@ -116,7 +114,8 @@ function addAssig(assig, selectedGroups = null) {
 
     // Create a new button element
     let button = document.createElement('button');
-    button.textContent = '🗑️';
+    button.className = 'delete-btn';
+    button.setAttribute('aria-label', 'Delete assignment');
 
     // Add a click event listener to remove the assignment
     button.onclick = function () {
@@ -127,24 +126,36 @@ function addAssig(assig, selectedGroups = null) {
         }
         // Animate removal
         div.classList.add('collapsing');
+        div.style.maxHeight = div.scrollHeight + 'px';
+        requestAnimationFrame(() => {
+            div.style.maxHeight = '0';
+            div.style.marginTop = '0';
+            div.style.marginBottom = '0';
+            div.style.paddingTop = '0';
+            div.style.paddingBottom = '0';
+        });
         setTimeout(() => {
             div.remove();
-        }, 200); // Match the transition duration
+            // Trigger reflow to ensure smooth animation of remaining elements
+            selectedAssigsContainer.offsetHeight;
+        }, 500); // Match the transition duration
     };
 
-    div2.appendChild(h2);
-    div2.appendChild(button);
-    div.appendChild(div2);
+    headerDiv.appendChild(h2);
+    div.appendChild(headerDiv);
+    div.appendChild(button);
     selectedAssigsContainer.appendChild(div);
 
     // Trigger animation
     setTimeout(function() {
         div.classList.add('show');
-    }, 10); // Slight delay to ensure the element is added to the DOM before the class is added
+    }, 10);
 
     getAssigData(assig).then(data => {
         getCapacity().then(capacity_data => {
             let assigGroups = getAssigGroups(data);
+            let checkboxContainer = document.createElement('div');
+            checkboxContainer.className = 'checkbox-container';
             assigGroups.forEach(group => {
                 group.forEach(subgroup => {
                     let checkbox = document.createElement('input');
@@ -171,8 +182,9 @@ function addAssig(assig, selectedGroups = null) {
                     label.style.color = color;
                     label.htmlFor = checkbox.id;
                     label.appendChild(document.createTextNode(subgroup));
-                    div.appendChild(checkbox);
-                    div.appendChild(label);
+                    
+                    checkboxContainer.appendChild(checkbox);
+                    checkboxContainer.appendChild(label);
 
                     if (checkbox.checked) {
                         selectedAssigs[assig][subgroup] = {};
@@ -186,11 +198,15 @@ function addAssig(assig, selectedGroups = null) {
                         delete selectedAssigs[assig][subgroup];
                     }
                 });
-                div.appendChild(document.createElement('br'));
+                checkboxContainer.appendChild(document.createElement('br'));
             });
-            // Trigger height adjustment animation
+            div.appendChild(checkboxContainer);
+            // Trigger height adjustment and checkbox fade-in animation
             setTimeout(() => {
                 div.style.maxHeight = div.scrollHeight + 'px';
+                setTimeout(() => {
+                    checkboxContainer.classList.add('show');
+                }, 300)
             }, 10); // Slight delay to ensure the element's children are rendered
             
             updateURLParams();
