@@ -61,9 +61,21 @@ if(localStorage.getItem('theme') === 'dark') {
     rootElement.setAttribute('data-theme', 'dark');
 }
 
+// Detect system preference
+const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+// Load saved theme from localStorage, or fallback to system preference
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+    rootElement.setAttribute('data-theme', 'dark');
+} else {
+    rootElement.setAttribute('data-theme', 'light');
+}
+
+// Toggle button
 toggleButton.addEventListener('click', () => {
-    if(rootElement.getAttribute('data-theme') === 'dark') {
-        rootElement.removeAttribute('data-theme');
+    if (rootElement.getAttribute('data-theme') === 'dark') {
+        rootElement.setAttribute('data-theme', 'light');
         localStorage.setItem('theme', 'light');
     } else {
         rootElement.setAttribute('data-theme', 'dark');
