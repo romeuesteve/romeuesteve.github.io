@@ -52,3 +52,21 @@ fetch('data/projects.json')
       </a>
     `;
   });
+
+const toggleButton = document.getElementById('theme-toggle');
+const rootElement = document.documentElement;
+
+// Check saved theme in localStorage
+if(localStorage.getItem('theme') === 'dark') {
+    rootElement.setAttribute('data-theme', 'dark');
+}
+
+toggleButton.addEventListener('click', () => {
+    if(rootElement.getAttribute('data-theme') === 'dark') {
+        rootElement.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'light');
+    } else {
+        rootElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+    }
+});
