@@ -1,25 +1,53 @@
+:root {
+    --primary-color: #222;
+    --accent-color: #55cc55;
+    --background-color: #fff;
+    --transition: 0.2s ease-in-out;
+}
+
+::selection {
+    background-color: var(--accent-color);
+    color: var(--background-color);
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: "Chivo Mono", sans-serif;
-    color: #222;
+    color: var(--primary-color);
+    background-color: var(--background-color);
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: "Roboto", sans-serif;
     font-weight: 600;
-    color: #222;
+    color: var(--primary-color);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+a:focus, button:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
 }
 
 header {
-    background: #fff;
+    background: var(--background-color);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     position: sticky;
     top: 0;
+    z-index: 100;
 }
 
 .navbar {
@@ -39,7 +67,7 @@ header {
 
 .logo i {
     font-size: 1.5rem;
-    color: #222;
+    color: var(--accent-color);
 }
 
 .nav-links {
@@ -50,13 +78,11 @@ header {
 
 .nav-links a {
     display: inline-block;
-    text-decoration: none;
-    color: #222;
-    transition: transform 0.2s, color 0.2s;
+    transition: transform var(--transition), color var(--transition);
 }
 
 .nav-links a:hover {
-    color: #55cc55;
+    color: var(--accent-color);
     transform: translateY(-2px);
 }
 
@@ -64,40 +90,33 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 80vh;
+    min-height: 80vh;
     text-align: center;
+    flex-direction: column;
+    padding: 2rem;
 }
 
 .hero h2 span {
-    color: #55cc55;
+    color: var(--accent-color);
     font-weight: 900;
 }
 
 .hero-social {
     margin-top: 20px;
-    justify-content: center;
-    align-items: center;
     display: flex;
+    justify-content: center;
     gap: 20px;
 }
 
 .hero-social a {
-    color: #222;
+    color: var(--primary-color);
     font-size: 2rem;
-    transition: transform 0.2s, color 0.2s;
+    transition: transform var(--transition), color var(--transition);
 }
 
 .hero-social a:hover {
-    color: #55cc55;
+    color: var(--accent-color);
     transform: translateY(-5px);
-}
-
-.btn {
-    background: #222;
-    color: #fff;
-    padding: 0.6rem 1.2rem;
-    border-radius: 4px;
-    text-decoration: none;
 }
 
 section {
@@ -112,14 +131,39 @@ section {
     gap: 1.5rem;
 }
 
+.project-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
 .project-card {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 1rem;
-    background: #fff;
-    transition: transform 0.2s;
+    background: var(--background-color);
+    transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .project-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.project-card:hover h3 {
+    color: var(--accent-color);
+    transition: color var(--transition);
+}
+
+.project-card img {
+    width: 50%;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+
+footer {
+    padding: 2rem 1rem;
+    text-align: center;
+    background: #f8f8f8;
+    margin-top: 2rem;
 }

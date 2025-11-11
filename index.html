@@ -5,17 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Romeu Esteve</title>
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chivo+Mono&family=Roboto:wght@100..900&display=swap" rel="stylesheet">
 
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
 
+    <!-- Styles -->
     <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-    <header>
-        <nav class="navbar">
+    <header role="banner">
+        <nav class="navbar" role="navigation">
             <div class="logo">
                 <i class="fa-solid fa-code"></i>
                 <h1>romeuesteve</h1>
@@ -29,53 +32,50 @@
             </ul>
         </nav>
     </header>
-    <section id="hero" class="hero">
-        <div class="hero-content">
-            <h2>Hello, I’m <span>Romeu</span></h2>
-            <p>Software Engineer | Back-end Dev</p>
 
-            <!-- Social icons -->
-            <div class="hero-social">
-                <a href="https://github.com/romeuesteve" target="_blank" aria-label="GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://www.linkedin.com/in/romeu-esteve-508463241/" target="_blank" aria-label="LinkedIn">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="mailto:romeuesteve@gmail.com" aria-label="Email">
-                    <i class="fas fa-envelope"></i>
-                </a>
+    <main>
+        <section id="hero" class="hero">
+            <div class="hero-content">
+                <h2>Hello, I’m <span>Romeu</span></h2>
+                <p>Software Engineer | Back-end Dev</p>
+                <div class="hero-social">
+                    <a href="https://github.com/romeuesteve" target="_blank" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/romeu-esteve-508463241/" target="_blank" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="mailto:romeuesteve@gmail.com" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
-    
-    <section id="about" class="about">
-        <h2>About Me</h2>
-        <p>
-            I'm a back-end developer.
-        </p>
-    </section>
+        </section>
 
-    <section id="skills" class="skills">
-        <h2>My Skills</h2>
-        <p>
-            C++, Python, Java...
-        </p>
-    </section>
+        <section id="about" class="about">
+            <h2>About Me</h2>
+            <p>I'm a back-end developer passionate about creating efficient and scalable systems.</p>
+        </section>
 
-    <section id="projects" class="projects">
-        <h2>Projects</h2>
-        <div id="project-list" class="project-list">
-            <!-- Projects listed -->
-        </div>
-    </section>
+        <section id="skills" class="skills">
+            <h2>My Skills</h2>
+            <p>C++, Python, Java, SQL, REST APIs, Docker, Git...</p>
+        </section>
 
-    <section id="contact" class="contact">
-        <h2>Contact</h2>
-        <p>Let's connect!</p>
-    </section>
+        <section id="projects" class="projects">
+            <h2>Projects</h2>
+            <div id="project-list" class="project-list">
+                <!-- Projects listed -->
+            </div>
+        </section>
 
-    <footer>
+        <section id="contact" class="contact">
+            <h2>Contact</h2>
+            <p>Let's connect! You can email me at <a href="mailto:romeuesteve@gmail.com">romeuesteve@gmail.com</a>.</p>
+        </section>
+    </main>
+
+    <footer role="contentinfo">
         <p>© 2025 Romeu Esteve. All rights reserved.</p>
     </footer>
 
