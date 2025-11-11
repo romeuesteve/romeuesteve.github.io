@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Portfolio Website",
+    "description": "A responsive personal portfolio built with HTML, CSS, and JavaScript.",
+    "image": "images/project1.png",
+    "link": "https://romeuesteve.github.io"
+  },
+  {
+    "title": "Project 2",
+    "description": "Lorem Ipsum",
+    "image": "images/project2.png",
+    "link": "https://google.com"
+  },
+  {
+    "title": "Project 3",
+    "description": "Lorem Ipsum",
+    "image": "images/project3.png",
+    "link": "https://google.com"
+  }
+]
