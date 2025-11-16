@@ -51,6 +51,11 @@ a:focus, button:focus {
     outline-offset: 2px;
 }
 
+span {
+    color: var(--accent-color);
+    font-weight: 900;
+}
+
 header {
     background: var(--background-color);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -116,11 +121,6 @@ header {
     text-align: center;
     flex-direction: column;
     padding: 2rem;
-}
-
-.hero h2 span {
-    color: var(--accent-color);
-    font-weight: 900;
 }
 
 .hero-social {
