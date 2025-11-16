@@ -1,20 +1,30 @@
 [
   {
-    "title": "Portfolio Website",
-    "description": "A responsive personal portfolio built with HTML, CSS, and JavaScript.",
-    "image": "images/project1.png",
-    "link": "https://romeuesteve.github.io"
+    "title": "Portfolio",
+    "link": "#hero",
+    "description": "A personal portfolio website showcasing my projects",
+    "image": "images/portfolio.png",
+    "tags": ["HTML", "CSS", "webdev"]
   },
   {
-    "title": "Project 2",
-    "description": "Lorem Ipsum",
-    "image": "images/project2.png",
-    "link": "https://google.com"
+    "title": "CronoFIB",
+    "link": "",
+    "description": "Schedule maker for the FIB UPC students. It integrates the official university API to access subjects and other data",
+    "image": "images/cronofib.png",
+    "tags": ["JQuery", "JavaScript"]
   },
   {
-    "title": "Project 3",
-    "description": "Lorem Ipsum",
-    "image": "images/project3.png",
-    "link": "https://google.com"
+    "title": "Longo Doggo",
+    "link": "https://romeuski.itch.io/longo-doggo",
+    "description": "Puzzle game developed in two weeks for a Game Jam, ranked #3 over-all winner. All programming, art and music done by myself",
+    "image": "https://img.itch.zone/aW1nLzY5MTAxNjEuZ2lm/original/gXKXZm.gif",
+    "tags": ["gamedev", "Game Maker"]
+  },
+  {
+    "title": "Dodge or Die",
+    "link": "https://romeuski.itch.io/dodge-or-die",
+    "description": "Simple game about a spaceship avoiding projectiles with a retro feel",
+    "image": "https://img.itch.zone/aW1hZ2UvODcyNjg3LzQ5MDcwNjUuZ2lm/original/4RmvQB.gif",
+    "tags": ["gamedev", "Game Maker", "shaders"]
   }
 ]
