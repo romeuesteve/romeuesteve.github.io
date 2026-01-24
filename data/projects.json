@@ -8,7 +8,7 @@
   },
   {
     "title": "CronoFIB",
-    "link": "",
+    "link": "https://cronofib.vercel.app/",
     "description": "Schedule maker for the FIB UPC students. It integrates the official university API to access subjects and other data",
     "image": "images/cronofib.png",
     "tags": ["JQuery", "JavaScript"]
